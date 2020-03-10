@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">MobileComputing1</string>
+    <string name="string_welcome">Welcome To My Very First Android Application!</string>
+    <string name="welcome_string">Welcome to My Very First Android Application!</string>
+    <string name="button1">Tables</string>
+    <string name="add">ADD</string>
+    <string name="delete">DELETE</string>
 </resources>
