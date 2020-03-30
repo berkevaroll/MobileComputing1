@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">MobileComputing1</string>
+    <string name="login">LOG IN</string>
+    <string name="usrname">Username</string>
+    <string name="pswd">Password</string>
 </resources>
