@@ -64,12 +64,16 @@ public class TableActivity extends AppCompatActivity implements PopupMenu.OnMenu
     public void populateListView(){
 
         Cursor data = dbHelper.getData();
-        ArrayList<String> listData = new ArrayList<>();
+        ArrayList<String> listTitle = new ArrayList<>();
+        ArrayList<String> listContent = new ArrayList<>();
         while(data.moveToNext()){
-            listData.add(data.getString(1));
+            listTitle.add(data.getString(1));
+            listContent.add(data.getString(2));
         }
-        ListAdapter adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,listData);
-        listView.setAdapter(adapter);
+        MyListAdapter myAdapter = new MyListAdapter(this,R.layout.adapter_view_layout, listTitle);
+        listView.setAdapter(myAdapter);
+        //ListAdapter adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,listTitle);
+        //listView.setAdapter(adapter);
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener(){
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -91,7 +95,6 @@ public class TableActivity extends AppCompatActivity implements PopupMenu.OnMenu
     public boolean onMenuItemClick(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.edit:
-                Cursor data2 = dbHelper.getContent(_title);
                 Cursor data = dbHelper.getID(_title);
                 int itemID = -1;
                 while(data.moveToNext()){

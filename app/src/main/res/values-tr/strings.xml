@@ -2,7 +2,7 @@
 <resources>
     <string name="app_name">MobileComputing1</string>
     <string name="btnsave">Kaydet</string>
-    <string name="button1" translatable="false">Tablolar</string>
+    <string name="button1" translatable="false">Notlarim</string>
     <string name="delete" translatable="false">Sil</string>
     <string name="edit">Duzenle</string>
     <string name="hint_content">Icerik</string>
@@ -11,4 +11,8 @@
     <string name="text_title">Baslik</string>
     <string name="add" translatable="false">NOT EKLE</string>
     <string name="Eklemeformu">Form Ekle</string>
+    <string name="username">Kullanici Adi</string>
+    <string name="password">Sifre</string>
+    <string name="loginbtn">Giris Yap</string>
+    <string name="welcome">HOSGELDINIZ!</string>
 </resources>
