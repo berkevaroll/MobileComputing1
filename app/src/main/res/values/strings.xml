@@ -1,6 +1,13 @@
 <resources>
     <string name="app_name">MobileComputing1</string>
     <string name="login">LOG IN</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
     <string name="usrname">Username</string>
     <string name="pswd">Password</string>
+    <string name="email">E-Mail</string>
+    <string name="register">REGISTER</string>
+    <string name="loggedin">Already registered? Click here to Log In.</string>
+    <string name="tv_register">Don\'t have account yet? Click here to register!</string>
+    <string name="logout">Logout</string>
 </resources>
