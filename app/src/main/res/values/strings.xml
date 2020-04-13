@@ -10,4 +10,8 @@
     <string name="loggedin">Already registered? Click here to Log In.</string>
     <string name="tv_register">Don\'t have account yet? Click here to register!</string>
     <string name="logout">Logout</string>
+    <string name="map_key" translatable="false">
+
+        AIzaSyC46V_GrYR7A3wzr6Wh9B0oaDOz9_3l_Ro
+    </string>
 </resources>
