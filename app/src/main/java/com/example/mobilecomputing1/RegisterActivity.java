@@ -61,6 +61,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
         progressDialog.setMessage("Registering user...");
         progressDialog.show();
+
         StringRequest stringRequest = new StringRequest(Request.Method.POST, Constants.URL_REGISTER,
                 new Response.Listener<String>() {
                     @Override
@@ -70,7 +71,9 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                             JSONObject jsonObject = new JSONObject(response);
                             if(!jsonObject.getBoolean("error"))
                             {
-                                startActivity(new Intent(getApplicationContext(), MapsActivity.class));
+                                Toast.makeText(getApplicationContext(), jsonObject.getString("message"), Toast.LENGTH_LONG).show();
+
+                                startActivity(new Intent(getApplicationContext(), MainActivity.class));
                                 finish();
 
                             }
@@ -102,6 +105,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 return params;
             }
         };
+
         RequestHandler.getInstance(this).addToRequestQueue(stringRequest);
 
     }

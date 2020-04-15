@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
-                            Toast.makeText(getApplicationContext(), "FAiled!!!!", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getApplicationContext(), "Failed!!!!", Toast.LENGTH_LONG).show();
                         }
 
                     }
