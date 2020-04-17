@@ -3,10 +3,6 @@ package com.example.mobilecomputing1;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.Volley;
-
 public class SharedPrefManager {
     private static SharedPrefManager instance;;
     private static Context ctx;
@@ -53,6 +49,13 @@ public class SharedPrefManager {
         editor.clear();
         editor.apply();
         return true;
+    }
+    public String GetID(){
+        String id;
+        SharedPreferences sharedPreferences = ctx.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        id = String.valueOf(sharedPreferences.getInt(KEY_USER_ID,-1));
+        return id;
+
     }
 
 }

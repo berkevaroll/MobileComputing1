@@ -14,4 +14,7 @@
 
         AIzaSyC46V_GrYR7A3wzr6Wh9B0oaDOz9_3l_Ro
     </string>
+    <string name="title">Title</string>
+    <string name="desc">Description</string>
+    <string name="save">Save</string>
 </resources>

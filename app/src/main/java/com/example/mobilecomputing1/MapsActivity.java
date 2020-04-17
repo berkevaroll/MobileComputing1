@@ -12,7 +12,6 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -32,6 +31,8 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -40,7 +41,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMapClickListener {
 
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationProviderClient;
@@ -49,9 +50,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private static final String COARSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
     private Boolean mLocationPermissionsGranted = false;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1234;
+    private static final LatLngBounds LAT_LNG_BOUNDS = new LatLngBounds(
+            new LatLng(-40,-168), new LatLng(71, 136));
 
     private EditText mSearchText;
+    //private GoogleApiClient mGoogleApiClient;
     private ImageView mGps;
+    private CustomInfoWindowAdapter mCustomInfoWindowAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,16 +64,18 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         setContentView(R.layout.activity_maps);
         mSearchText = (EditText) findViewById(R.id.input_search);
         mGps = (ImageView) findViewById(R.id.ic_gps);
-
+        mCustomInfoWindowAdapter = new CustomInfoWindowAdapter(this);
         getLocationPermission();
         if(!SharedPrefManager.getInstance(this).isLoggedIn()){
             finish();
             startActivity(new Intent(getApplicationContext(), MainActivity.class));
         }
-
     }
 
+
     private void init(){
+        
+
         mSearchText.setOnEditorActionListener(new TextView.OnEditorActionListener(){
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -76,11 +83,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 if(actionId == EditorInfo.IME_ACTION_SEARCH
                         || actionId == EditorInfo.IME_ACTION_DONE
                         || event.getAction() == KeyEvent.ACTION_DOWN
-                        || event.getAction() == KeyEvent.KEYCODE_ENTER || event.getAction() == KeyEvent.KEYCODE_E){
+                        || event.getAction() == KeyEvent.KEYCODE_ENTER){
                     //execute method for search
+                    Toast.makeText(MapsActivity.this, "Locating searched Address", Toast.LENGTH_SHORT).show();
                     geoLocate();
-
                 }
+                Toast.makeText(MapsActivity.this, "Cant listen editor", Toast.LENGTH_SHORT).show();
                 return false;
             }
         });
@@ -110,6 +118,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             moveCamera(new LatLng(address.getLatitude(), address.getLongitude()),DEFAULT_ZOOM, address.getAddressLine(0));
         }
+
     }
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -120,12 +129,33 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             if (ActivityCompat.checkSelfPermission(this, FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                     && ActivityCompat.checkSelfPermission(this, COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 return;
+
             }
+            mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+                @Override
+                public void onInfoWindowClick(Marker marker) {
+                    Toast.makeText(MapsActivity.this, "Clicked"+marker.getTitle(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MapsActivity.this, "Longitude = "+marker.getPosition().longitude+"  Latitude = " + marker.getPosition().latitude, Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(MapsActivity.this, EditMarker.class);
+                    intent.putExtra("lat",marker.getPosition().latitude);
+                    intent.putExtra("lng",marker.getPosition().longitude);
+                    startActivity(intent);
+                }
+            });
+            mMap.setOnMapClickListener(this);
             mMap.setMyLocationEnabled(true);
             mMap.getUiSettings().setMyLocationButtonEnabled(false);
-
             init();
+
         }
+
+    }
+
+    @Override
+    public void onMapClick(LatLng latLng) {
+        MarkerOptions mOptions = new MarkerOptions().position(latLng).title("Custom marker");
+        //Add marker and get details
+        mMap.addMarker(mOptions);
     }
     private void initMap(){
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
@@ -190,6 +220,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
     private void moveCamera(LatLng latLng, float zoom, String title){
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,zoom));
+        mMap.setInfoWindowAdapter(mCustomInfoWindowAdapter);
 
         if(!title.equals("My Location")){
             MarkerOptions options  = new MarkerOptions().position(latLng).title(title);
@@ -222,5 +253,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     }
+
+
 
 }
