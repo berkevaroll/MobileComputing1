@@ -24,6 +24,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -36,6 +40,10 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -53,6 +61,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private static final LatLngBounds LAT_LNG_BOUNDS = new LatLngBounds(
             new LatLng(-40,-168), new LatLng(71, 136));
 
+    private List<MyMarker> markerList;
     private EditText mSearchText;
     //private GoogleApiClient mGoogleApiClient;
     private ImageView mGps;
@@ -64,26 +73,29 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         setContentView(R.layout.activity_maps);
         mSearchText = (EditText) findViewById(R.id.input_search);
         mGps = (ImageView) findViewById(R.id.ic_gps);
+        markerList = new ArrayList<>();
         mCustomInfoWindowAdapter = new CustomInfoWindowAdapter(this);
         getLocationPermission();
         if(!SharedPrefManager.getInstance(this).isLoggedIn()){
             finish();
             startActivity(new Intent(getApplicationContext(), MainActivity.class));
         }
+
+
     }
 
 
-    private void init(){
-        
+    private void init() {
 
-        mSearchText.setOnEditorActionListener(new TextView.OnEditorActionListener(){
+
+        mSearchText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 
-                if(actionId == EditorInfo.IME_ACTION_SEARCH
+                if (actionId == EditorInfo.IME_ACTION_SEARCH
                         || actionId == EditorInfo.IME_ACTION_DONE
                         || event.getAction() == KeyEvent.ACTION_DOWN
-                        || event.getAction() == KeyEvent.KEYCODE_ENTER){
+                        || event.getAction() == KeyEvent.KEYCODE_ENTER) {
                     //execute method for search
                     Toast.makeText(MapsActivity.this, "Locating searched Address", Toast.LENGTH_SHORT).show();
                     geoLocate();
@@ -100,7 +112,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
         hideSoftKeyboard();
     }
-
     private void geoLocate(){
         String searchString = mSearchText.getText().toString();
 
@@ -139,23 +150,30 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     Intent intent = new Intent(MapsActivity.this, EditMarker.class);
                     intent.putExtra("lat",marker.getPosition().latitude);
                     intent.putExtra("lng",marker.getPosition().longitude);
+                    intent.putExtra("title_",marker.getTitle());
+
                     startActivity(intent);
+                    finish();
                 }
             });
             mMap.setOnMapClickListener(this);
             mMap.setMyLocationEnabled(true);
             mMap.getUiSettings().setMyLocationButtonEnabled(false);
+            mMap.clear();
+            GetMarkers();
+            if(markerList.isEmpty()) Toast.makeText(this, "Dizi Bos!!!!", Toast.LENGTH_SHORT).show();
             init();
+
 
         }
 
     }
-
     @Override
     public void onMapClick(LatLng latLng) {
         MarkerOptions mOptions = new MarkerOptions().position(latLng).title("Custom marker");
         //Add marker and get details
         mMap.addMarker(mOptions);
+
     }
     private void initMap(){
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
@@ -218,6 +236,57 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         }
     }
+    private void GetMarkers(){
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, Constants.URL_LIST_MARKERS,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            JSONObject jsonObject = new JSONObject(response);
+
+                            if(!jsonObject.getBoolean("error"))
+                            {
+                                JSONArray markers = jsonObject.getJSONArray("markers");
+                                Toast.makeText(getApplicationContext(), jsonObject.getString("message"), Toast.LENGTH_LONG).show();
+
+                                for (int i = 0; i < markers.length(); i++) {
+
+                                    JSONObject obj = markers.getJSONObject(i);
+                                    LatLng latLng = new LatLng(Double.valueOf(obj.getString("lat")),Double.valueOf(obj.getString("lng")));
+                                    MarkerOptions options  = new MarkerOptions().position(latLng).title(obj.getString("title"));
+                                    mMap.addMarker(options);
+//                                    markerList.add(new MyMarker(
+//                                            obj.getInt("id"),
+//                                            obj.getString("lng"),
+//                                            obj.getString("lat"),
+//                                            obj.getString("title"),
+//                                            obj.getString("description"),
+//                                            obj.getString("img_url"),
+//                                            obj.getInt("user_id")
+//                                    ));
+                                }
+
+                            }
+                            else{
+                                Toast.makeText(getApplicationContext(), jsonObject.getString("message"), Toast.LENGTH_LONG).show();
+                            }
+
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                });
+        RequestHandler.getInstance(this).addToRequestQueue(stringRequest);
+
+    }
     private void moveCamera(LatLng latLng, float zoom, String title){
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,zoom));
         mMap.setInfoWindowAdapter(mCustomInfoWindowAdapter);
@@ -240,8 +309,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         switch(item.getItemId()) {
             case R.id.menuLogout:
                 SharedPrefManager.getInstance(this).Logout();
-                finish();
                 startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                finish();
                 break;
         }
         return true;

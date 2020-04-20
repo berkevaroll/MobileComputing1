@@ -27,7 +27,8 @@ public class EditMarker extends AppCompatActivity implements View.OnClickListene
     private Button edit, remove, save;
     private Double mLng;
     private Double mLat;
-
+    private Intent intent;
+    private int id =4;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,17 +42,20 @@ public class EditMarker extends AppCompatActivity implements View.OnClickListene
         desc.setSelection(0);
         Toast.makeText(this, SharedPrefManager.getInstance(this).GetID(), Toast.LENGTH_SHORT).show();
         save.setOnClickListener(this);
-
-        Intent intent = getIntent();
+        remove.setOnClickListener(this);
+        edit.setOnClickListener(this);
+        Intent intent2 = new Intent(EditMarker.this, CustomInfoWindowAdapter.class);
+        intent2.putExtra("desc_",desc.getText().toString());
+        intent = getIntent();
         Bundle b = intent.getExtras();
         if(b!= null){
             mLng = (Double)b.get("lng");
             mLat = (Double) b.get("lat");
+            mtitle.setText((String) b.get("title_"));
         }
 
 
     }
-
     private void SaveMarker(){
         final String title = mtitle.getText().toString();
         final String description = desc.getText().toString();
@@ -98,6 +102,92 @@ public class EditMarker extends AppCompatActivity implements View.OnClickListene
         };
 
         RequestHandler.getInstance(this).addToRequestQueue(stringRequest);
+        finish();
+        startActivity(new Intent(getApplicationContext(), MapsActivity.class));
+
+    }
+    private void RemoveMarker(int id){
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, Constants.URL_REMOVE_MARKER+id,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            JSONObject jsonObject = new JSONObject(response);
+                            if(!jsonObject.getBoolean("error"))
+                            {
+                                Toast.makeText(getApplicationContext(), jsonObject.getString("message"), Toast.LENGTH_LONG).show();
+
+                            }
+                            else{
+                                Toast.makeText(getApplicationContext(), jsonObject.getString("message"), Toast.LENGTH_LONG).show();
+                            }
+
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                });
+
+        RequestHandler.getInstance(this).addToRequestQueue(stringRequest);
+        finish();
+        startActivity(new Intent(getApplicationContext(), MapsActivity.class));
+    }
+    private void UpdateMarker(){
+        final String _title = mtitle.getText().toString();
+        final String _description = desc.getText().toString();
+        final String _id = String.valueOf(4);
+        final String _img_url = "resim";
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, Constants.URL_UPDATE_MARKER,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            JSONObject jsonObject = new JSONObject(response);
+                            if(!jsonObject.getBoolean("error"))
+                            {
+                                Toast.makeText(getApplicationContext(), jsonObject.getString("message"), Toast.LENGTH_LONG).show();
+
+                            }
+                            else{
+                                Toast.makeText(getApplicationContext(), jsonObject.getString("message"), Toast.LENGTH_LONG).show();
+                            }
+
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String,String> params = new HashMap<>();
+                params.put("id",_id);
+                params.put("title",_title);
+                params.put("description",_description);
+                params.put("img_url",_img_url);
+                return params;
+            }
+        };
+
+        RequestHandler.getInstance(this).addToRequestQueue(stringRequest);
+        finish();
+        startActivity(new Intent(getApplicationContext(), MapsActivity.class));
+
 
     }
     @Override
@@ -107,10 +197,10 @@ public class EditMarker extends AppCompatActivity implements View.OnClickListene
             SaveMarker();
         }
         if(v == edit){
-            //Edit details
+            UpdateMarker();
         }
         if(v == remove){
-            //Remove marker
+            RemoveMarker(id);
         }
     }
 }
