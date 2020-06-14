@@ -1,3 +1,17 @@
 <resources>
-    <string name="app_name">MobileComputing1</string>
+    <string name="app_name" translatable="false">MobileComputing1</string>
+    <string name="string_welcome" translatable="false">Welcome To My Very First Android Application!</string>
+    <string name="welcome_string" translatable="false">Welcome to My Very First Android Application!</string>
+    <string name="button1" translatable="false">My Notes</string>
+    <string name="add" translatable="false">ADD NOTES</string>
+    <string name="delete" translatable="false">Delete</string>
+    <string name="Eklemeformu">Form ekle</string>
+    <string name="text_title">Title</string>
+    <string name="hint_content">Content</string>
+    <string name="btnsave">Save</string>
+    <string name="edit">Edit</string>
+    <string name="loginbtn">LOG IN</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="welcome">WELCOME!</string>
 </resources>
