@@ -1,17 +1,20 @@
 <resources>
-    <string name="app_name" translatable="false">MobileComputing1</string>
-    <string name="string_welcome" translatable="false">Welcome To My Very First Android Application!</string>
-    <string name="welcome_string" translatable="false">Welcome to My Very First Android Application!</string>
-    <string name="button1" translatable="false">My Notes</string>
-    <string name="add" translatable="false">ADD NOTES</string>
-    <string name="delete" translatable="false">Delete</string>
-    <string name="Eklemeformu">Form ekle</string>
-    <string name="text_title">Title</string>
-    <string name="hint_content">Content</string>
-    <string name="btnsave">Save</string>
-    <string name="edit">Edit</string>
-    <string name="loginbtn">LOG IN</string>
+    <string name="app_name">MobileComputing1</string>
+    <string name="login">LOG IN</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
-    <string name="welcome">WELCOME!</string>
+    <string name="usrname">Username</string>
+    <string name="pswd">Password</string>
+    <string name="email">E-Mail</string>
+    <string name="register">REGISTER</string>
+    <string name="loggedin">Already registered? Click here to Log In.</string>
+    <string name="tv_register">Don\'t have account yet? Click here to register!</string>
+    <string name="logout">Logout</string>
+    <string name="map_key" translatable="false">
+
+        AIzaSyC46V_GrYR7A3wzr6Wh9B0oaDOz9_3l_Ro
+    </string>
+    <string name="title">Title</string>
+    <string name="desc">Description</string>
+    <string name="save">Save</string>
 </resources>
