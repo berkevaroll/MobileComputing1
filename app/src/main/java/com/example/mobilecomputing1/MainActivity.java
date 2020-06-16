@@ -1,16 +1,15 @@
 package com.example.mobilecomputing1;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -29,6 +28,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private EditText editTextUsername, editTextPassword;
     private ProgressDialog progressDialog;
     private Button btn_login;
+    private Button btn_table;
     private TextView tv_register;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         }
         btn_login = (Button) findViewById(R.id.login_btn);
+        btn_table = (Button) findViewById(R.id.table_button);
         tv_register = (TextView) findViewById(R.id.tv_register);
         editTextPassword = (EditText) findViewById(R.id.pswText);
         editTextUsername = (EditText) findViewById(R.id.usrText);
@@ -49,6 +50,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Please wait...");
 
+        btn_table.setOnClickListener(this);
         btn_login.setOnClickListener(this);
         tv_register.setOnClickListener(this);
     }
@@ -63,6 +65,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         if(v == tv_register){Intent intent = new Intent(this, RegisterActivity.class);
             startActivity(intent);}
+        if(v == btn_table){
+            Intent intent = new Intent(this, TableActivity.class);
+            startActivity(intent);
+        }
     }
 
     private void userLogin(){

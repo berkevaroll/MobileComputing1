@@ -21,6 +21,9 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/map_key" />
 
+        <activity android:name=".TableActivity" />
+        <activity android:name=".FormActivity" />
+        <activity android:name=".EditDataActivity" />
         <activity android:name=".RegisterActivity" />
         <activity android:name=".MapsActivity" />
         <activity android:name=".MainActivity">
